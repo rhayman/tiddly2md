@@ -94,31 +94,12 @@ def main(args):
 
     for row_id, row in df.iterrows():
         filename = sanitize(row.title)
-        if args.sections:
-            for rec_type in args.sections:
-                fname = filename + "_" + rec_type
-                fname = "{}.{}".format(fname, args.ext)
-                txt = row.text
-                if len(txt) > 1:
-                    print(f"Filename: {fname}")
-                    if "surgery" in rec_type:
-                        txt = txt.split("!!!")[1]
-                    if "screening" in rec_type:
-                        txt = txt.split("!!!")[2:]
-                    txt = "".join(txt)
-                    txt = "!!!" + txt
-                    with open(os.path.join(output_path, fname), "w") as f:
-                        try:
-                            f.write(wiki_to_md(txt))
-                        except:
-                            f.write("")
-        else:
-            fname = "{}.{}".format(fname, args.ext)
-            with open(os.path.join(output_path, fname), "w") as f:
-                try:
-                    f.write(wiki_to_md(row.text))
-                except:
-                    f.write("")
+        filename = "{}.{}".format(filename, args.ext)
+        with open(os.path.join(output_path, filename), "w") as f:
+            try:
+                f.write(wiki_to_md(row.text))
+            except:
+                f.write("")
 
 
 if __name__ == "__main__":
@@ -148,14 +129,6 @@ if __name__ == "__main__":
         help="Valid tag to export, can have multiple",
     )
     parser.add_argument("input_file", help="Exported CSV file")
-    parser.add_argument(
-        "--sections",
-        "-s",
-        dest="sections",
-        action="append",
-        help="Which section to extract",
-    )
-    parser.add_argument("--screening", help="Extract only the screening section")
     args = parser.parse_args()
 
     sys.exit(main(args))
